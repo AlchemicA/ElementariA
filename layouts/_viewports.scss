@@ -1,0 +1,46 @@
+$tablet_width: 40em !default;
+$desktop_width: 64em !default;
+
+@mixin tablet {
+  @media (min-width: #{$tablet_width + 0.063em}) and (max-width: #{$desktop_width}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$desktop_width + 0.063em}) {
+    @content;
+  }
+}
+
+@if mixin-exists(grid_build) {
+  $grid_gutter_width: 1%;
+  $grid_container_element: ".grid--m";
+  $grid_cell_element: ".cell--m";
+  $grid_push_element: ".push--m";
+  $grid_columns: (1, 2, 3, 4);
+  $font_size: 14px;
+
+  @include tablet {
+    html {
+      font-size: $font_size;
+    }
+
+  	@include grid_build;
+  }
+
+  $grid_gutter_width: 1%;
+  $grid_container_element: ".grid--l";
+  $grid_cell_element: ".cell--l";
+  $grid_push_element: ".push--l";
+  $grid_columns: (1, 2, 3, 4, 6, 12);
+  $font_size: 16px;
+
+  @include desktop {
+    html {
+      font-size: $font_size;
+    }
+
+  	@include grid_build;
+  }
+}

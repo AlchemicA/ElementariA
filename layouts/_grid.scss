@@ -1,0 +1,125 @@
+/* Grid variables
+   ========================================================================== */
+
+$grid_gutter_width: 1% !default;
+$grid_container_element: ".grid" !default;
+$grid_cell_element: ".cell" !default;
+$grid_push_element: ".push" !default;
+$grid_columns: (1, 2) !default;
+
+/* Grid mixins
+   ========================================================================== */
+
+// Grid builder
+@mixin grid_container() {
+      width: 100%;
+  max-width: 100%;
+     margin: 0 auto;
+   position: relative;
+   overflow: visible !important;
+      clear: both;
+      *zoom: 1;
+
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+
+  &:after {
+    clear: both;
+  }
+
+  & & {
+    margin-left: 0 - $grid_gutter_width;
+  }
+}
+
+@mixin grid_cell($_element_width, $_grid_cell_extend:null) {
+  @if ($_grid_cell_extend == null) {
+    /**
+     * 1. Prevents columns from collapsing when empty.
+     */
+
+    margin-right: -100%;
+        position: relative;
+      min-height: 1px; /* 1 */
+           clear: none;
+           float: left;
+           width: 100% - ($grid_gutter_width * 2);
+           margin-left: $grid_gutter_width;
+  }
+  @else {
+    @extend #{$_grid_cell_extend};
+  }
+}
+
+@mixin grid_push($_element_width) {
+  margin-left: ($_element_width * $i) + ($grid_gutter_width * ($i + 1));
+}
+
+@mixin grid_build() {
+  #{$grid_container_element} {
+    @include grid_container;
+
+    $_grid_max_columns: max($grid_columns...);
+    $_element_width:  (100% - ($grid_gutter_width * ($_grid_max_columns + 1))) / $_grid_max_columns;
+    $_grid_cell_extend: null;
+
+    #{$grid_cell_element} {
+      @include grid_cell($_element_width, $_grid_cell_extend);
+    }
+
+    // Cells
+    @for $i from 1 through ($_grid_max_columns - 1) {
+      #{$grid_cell_element}#{$grid_cell_element}--#{$i} {
+        // @include grid_cell($_element_width, $_grid_cell_extend);
+
+              width: ($_element_width * $i) + ($grid_gutter_width * ($i - 1));
+        margin-left: $grid_gutter_width;
+      }
+    }
+
+    // Pushes
+    @for $i from 1 through ($_grid_max_columns - 1) {
+      #{$grid_cell_element}#{$grid_push_element}--#{$i} {
+        margin-left: ($_element_width * $i) + ($grid_gutter_width * ($i + 1));
+      }
+    }
+
+    #{$grid_cell_element}--break {
+      clear: left;
+    }
+  }
+
+  @each $_grid_max_columns in $grid_columns {
+    #{$grid_container_element}#{$grid_container_element}--#{$_grid_max_columns} {
+      // @include grid_container;
+
+      $_element_width:  (100% - ($grid_gutter_width * ($_grid_max_columns + 1))) / $_grid_max_columns;
+      $_grid_cell_extend: null;
+
+      #{$grid_cell_element} {
+        //@include grid_cell($_element_width, $_grid_cell_extend);
+
+              width: $_element_width;
+        margin-left: $grid_gutter_width;
+      }
+
+      #{$grid_cell_element}:nth-child(#{$_grid_max_columns}n+1) {
+        clear: left;
+      }
+    }
+  }
+}
+
+@function grid_element_width($_grid_columns) {
+  @return (100% - ($grid_gutter_width * ($_grid_columns + 1))) / $_grid_columns;
+}
+
+/* Grid
+   ========================================================================== */
+
+@include grid_build;
+
+
