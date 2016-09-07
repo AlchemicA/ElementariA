@@ -1,0 +1,10 @@
+$font-weight: 400 !default;
+$font-color: #333 !default;
+$font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+
+body {
+  font-family: $font-family;
+  font-weight: $font-weight;
+  line-height: 1.42;
+  color: $font-color;
+}

@@ -1,0 +1,61 @@
+$button_padding: 1em !default;
+$button_border_radius: 2px !default;
+$button_default: (#fff, #111) !default;
+$button_extras: (
+  "red": (#e74c3c, #fff),
+  "orange": (#f39c12, #fff),
+  "blue": (#3498db, #fff),
+  "green": (#25ba84, #fff),
+) !default;
+
+%button {
+           padding: $button_padding / 2 $button_padding;
+            border: none;
+   text-decoration: none;
+        text-align: center;
+            cursor: pointer;
+
+  @include border-radius($button_border_radius);
+  @include transition(box-shadow, 0.2s, cubic-bezier(0.4, 0, 1, 1));
+  @include transition(background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1));
+  @include transition(color 0.2s cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+@mixin button($_bg_color, $_text_color, $_darken:10%) {
+  background-color: $_bg_color;
+             color: $_text_color;
+
+  &:hover,
+  &:focus,
+  &:active {
+    @if (lightness($_bg_color) > 50) {
+      background-color: darken($_bg_color, $_darken / 2);
+                 color: darken($_text_color, $_darken);
+    }
+    @else {
+      background-color: lighten($_bg_color, $_darken / 2);
+                 color: lighten($_text_color, $_darken);
+    }
+  }
+}
+
+button,
+[type="button"],
+[type="submit"],
+[type="reset"],
+.button {
+  @extend %button;
+
+  @include button($button_default...);
+
+  @each $_button, $_button_colors in $button_extras {
+    &.button--#{$_button} {
+      @include button($_button_colors...);
+    }
+  }
+}
+
+.button--s {
+  font-size: 0.707em;
+    padding: $padding / 2;
+}
